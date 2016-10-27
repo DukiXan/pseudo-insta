@@ -29,12 +29,31 @@ $(".logout").click(function() {
 });
 
 function showImage(img) {
+	//$(".overlay").css("display", "none");
 	$(".overlayImg").html("<img src=\"resources/imgz/" + img + "\">");
     $(".overlay").css("display", "inline");
 }
 
 function hideImage() {
 	$(".overlay").css("display", "none");
+}
+
+function changeImage(direction) {
+	var currentImage = getCurrentImage();
+
+	$.get("resources/get_picture.php", {"img": currentImage, "direction": direction}).success(function(data) {
+		var img = JSON.parse(data).image;
+		$(".overlayImg").html("<img src=\"resources/imgz/" + img + "\">");
+	}).fail(function() {
+		window.location.replace("resources/authenticate.php");
+	});
+}
+
+function getCurrentImage() {
+	var currentImagePath = $(".overlayImg img").attr("src");
+	var currentImage = currentImagePath.substring(currentImagePath.lastIndexOf("/") + 1, currentImagePath.length);
+	
+	return currentImage;
 }
 
 getPictures(1);

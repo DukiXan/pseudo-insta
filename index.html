@@ -13,13 +13,13 @@
 	<div class="imgz"></div>
 	<div class="page"></div>
 
-	<div class="overlay" onclick="hideImage()">
-		<div class="overlayImg">
+	<div class="overlay">
+		<div class="overlayImg" onclick="hideImage()">
 			<img src="resources/imgz/hs.JPG">
 		</div>
 		<div class="arrows">
-			<div class="arrow rightArrow"><</div>
-			<div class="arrow leftArrow">></div>
+			<div class="arrow leftArrow" onclick="changeImage('left')"><</div>
+			<div class="arrow rightArrow" onclick="changeImage('right')">></div>
 		</div>
 	</div>
 </body>
