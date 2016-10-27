@@ -38,6 +38,10 @@ function hideImage() {
 	$(".overlay").css("display", "none");
 }
 
+$('.arrows').click(function(event){
+    event.stopPropagation();
+});
+
 function changeImage(direction) {
 	var currentImage = getCurrentImage();
 
@@ -55,5 +59,25 @@ function getCurrentImage() {
 	
 	return currentImage;
 }
+
+$(document).keydown(function(e) {
+    switch(e.which) {
+        case 27:
+        hideImage();
+        break;
+
+        case 37:
+        changeImage("left");
+        break;
+
+        case 39:
+        changeImage("right");
+        break;
+
+        default: return;
+    }
+    
+    e.preventDefault();
+});
 
 getPictures(1);
