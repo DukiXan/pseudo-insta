@@ -5,7 +5,7 @@ body {
 	font-family: cursive;
 }
 
-img {
+.imgz img {
 	width: 20%;
 	height: 200px;
 	padding: 10px;
@@ -63,6 +63,13 @@ input[type="submit"]:hover {
 	right: 20;
 	font-size: 20px;
 	color: #fff;
+	cursor: pointer;
+}
+
+.logout:hover {
+	transition: 0.5s;
+	color: #d3d3d3;
+	font-size: 22px;
 }
 
 .imgz {
@@ -78,11 +85,69 @@ input[type="submit"]:hover {
 	cursor: pointer;
 }
 
+.overlay {
+	display: none;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.overlayImg {
+	margin-top: 20px;
+	background: black;
+	border-top: 1px solid #d3d3d3;
+	border-bottom: 1px solid #d3d3d3;
+	#width: 80%;
+}
+
+.overlayImg img {
+	max-width: 80%;
+	max-height: 80%;
+	height: 80%;
+	object-fit: contain;
+	#border: 3px solid #d3d3d3;
+}
+
+.arrow {
+	margin-top: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
+	color: white;
+	font-size: 35px;
+	border: 2px solid #d3d3d3;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	background: #3498db;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.arrow:hover {
+	background: #7FDBFF;
+	transition: 0.3s;
+	color: #000;
+	border: 2px solid #000;
+}
+
 @media screen and (max-width: 800px) {
-    img {
+    .imgz img {
         width: 80%;
 		height: 300px;
         margin-right: 0px;
         margin-left: 0px;
+    }
+
+    .overlayImg {
+    	border-top: none;
+    	margin-top: 0px;
+    }
+
+    .overlayImg img {
+		width: 80%;
     }
 }
