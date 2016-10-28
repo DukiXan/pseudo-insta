@@ -12,8 +12,9 @@ function getPictures(page) {
 			}
 
 			page++;
-
-			pageHtml = "<div onclick=\"getPictures(" + page + ")\">LOAD MORE</div>";
+			globalPage++;
+			//&#8595;
+			pageHtml = "<div onclick=\"getPictures(" + page + ")\">&#8635;</div>";
 		}
 
 		$(".page").html(pageHtml);
@@ -29,7 +30,6 @@ $(".logout").click(function() {
 });
 
 function showImage(img) {
-	//$(".overlay").css("display", "none");
 	$(".overlayImg").html("<img src=\"resources/imgz/" + img + "\">");
     $(".overlay").css("display", "inline");
 }
@@ -80,4 +80,11 @@ $(document).keydown(function(e) {
     e.preventDefault();
 });
 
-getPictures(1);
+$(window).scroll(function() {
+	if($(window).scrollTop() + window.innerHeight >= $(document).height() - 5 && globalPage % 10 != 0) {
+       getPictures(globalPage);
+   }
+});
+
+var globalPage = 1;
+getPictures(globalPage);

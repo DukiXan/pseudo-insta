@@ -15,7 +15,7 @@ function getPictures() {
 }
 
 function generateImageArray($page) {
-	$imgzPerPage = 8;
+	$imgzPerPage = 4;
 	$imgz = getAllPictures();
 	$imgz = array_slice($imgz, ($page - 1) * $imgzPerPage, $imgzPerPage);
 
