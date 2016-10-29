@@ -62,6 +62,10 @@ input[type="submit"]:hover {
 	cursor: pointer;
 }
 
+input[type="submit"]:not(:hover) {
+	transition: 0.5s;
+}
+
 .login {
 	font-size: 50px;
 	color: #3498db;
@@ -127,6 +131,25 @@ input[type="submit"]:hover {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
+.overlayX {
+	font-size: 40px;
+	color: #fff;
+	position: absolute;
+	right: 20px;
+	top: 10px;
+	cursor: pointer;
+}
+
+.overlayX:hover {
+	transition: 0.3s;
+	cursor: pointer;
+	color: #d3d3d3;
+}
+
+.overlayX:not(:hover) {
+	transition: 0.3s;
+}
+
 .overlayImg {
 	margin-top: 20px;
 	background: black;
@@ -175,6 +198,10 @@ input[type="submit"]:hover {
         margin-right: 0px;
         margin-left: 0px;
     }
+
+	.overlayX {
+		top: 0px;
+	}
 
     .overlayImg {
     	border-top: none;

@@ -1,0 +1,42 @@
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<link rel="stylesheet" href="admin_stylez.css">
+	<title>ADMIN</title>
+</head>
+<body>
+	<div class="header">
+		<div class="logout">
+			logout
+		</div>
+	</div>
+	<div class="admin_upload">
+		<form action="admin_resources/admin_upload.php" method="POST" enctype="multipart/form-data">
+			<input id="file" type="file" name="files[]" multiple>
+			<label for="file">Choose Files</label>
+			<input type="submit" value="&#10514;">
+		</form>
+	</div>
+	<div class="imgz">
+
+	</div>
+</body>
+<script>
+	 function showImages(input) {
+        for(var i = 0; i < input.files.length; i++){
+        	var reader = new FileReader();
+            reader.onload = function (e) {
+				var img = $('<img>');
+				img.attr('src', e.target.result);
+
+				img.appendTo('.imgz');
+			}
+            reader.readAsDataURL(input.files[i]);
+		}
+	}
+
+    $("#file").change(function(){
+        showImages(this);
+    });
+</script>
+</html>
