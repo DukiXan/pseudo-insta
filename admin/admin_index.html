@@ -21,22 +21,5 @@
 
 	</div>
 </body>
-<script>
-	 function showImages(input) {
-        for(var i = 0; i < input.files.length; i++){
-        	var reader = new FileReader();
-            reader.onload = function (e) {
-				var img = $('<img>');
-				img.attr('src', e.target.result);
-
-				img.appendTo('.imgz');
-			}
-            reader.readAsDataURL(input.files[i]);
-		}
-	}
-
-    $("#file").change(function(){
-        showImages(this);
-    });
-</script>
+<script type="text/javascript" src="admin_functions.js"></script>
 </html>

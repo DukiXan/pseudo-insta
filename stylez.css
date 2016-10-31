@@ -60,7 +60,6 @@ body {
 
 .imgz img:hover {
 	background: #ddd;
-	#transition: 0.1s;
 }
 
 .imgz img:not(:hover) {
@@ -209,6 +208,9 @@ input[type="submit"]:not(:hover) {
 	border: 2px solid #000;
 }
 
+/**
+ * Responsiveness
+ */
 @media screen and (max-width: 800px) {
     .imgz img {
         width: 80%;

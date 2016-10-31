@@ -90,9 +90,30 @@ function getCurrentImage() {
 /********** Events **********/
 
 /**
+ * Hide image when pressing on the overlay
+ */
+$(".overlay").click(function() {
+	hideImage();
+});
+
+/**
+ * Left arrow event
+ */
+$(".leftArrow").click(function() {
+	changeImage('left');
+});
+
+/**
+ * Right arrow event
+ */
+$(".rightArrow").click(function() {
+	changeImage('right');
+});
+
+/**
  * Stops hiding of the large preview when clicking on the arrows
  */
-$('.arrows').click(function(event){
+$(".arrows").click(function(event){
     event.stopPropagation();
 });
 
@@ -100,9 +121,7 @@ $('.arrows').click(function(event){
  * Logout function
  */
 $(".logout").click(function() {
-	$.get("resources/logout.php").done(function() {
-		window.location.replace("index.php");
-	});
+	window.location.replace("resources/logout.php");
 });
 
 /**
