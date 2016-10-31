@@ -13,6 +13,20 @@ function uploadFiles() {
 	header("Location: ../index.php");
 }
 
+function generateThumbnail($src, $dest) {
+	$original = imagecreatefromjpeg($src);
+	$width = imagesx($original);
+	$height = imagesy($original);
+	
+	// TODO: if height < width (handle landscape vs portrait)
+	$thumbnailWidth = 400;
+	$thumbnailHeight = floor($height * ($thumbnailWidth / $width));
+	$tempImage = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
+	imagecopyresampled($tempImage, $original, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $width, $height);
+	
+	imagejpeg($tempImage, $dest);
+}
+
 function getData($files, $i) {
 	$data = array();
 
@@ -31,6 +45,7 @@ function saveFile($data) {
 		$name = date("Y-m-d-H-i-s") . uniqid() . rand(1, 10000) . "." . $data["extension"];
 		$destination = "../../resources/imgz/" . $name;
 		move_uploaded_file($data["name"], $destination);
+		generateThumbnail($destination, "../../resources/thumbnails/" . $name);
 	}
 }
 

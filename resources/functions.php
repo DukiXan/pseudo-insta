@@ -1,7 +1,14 @@
 <?php
+session_start();
 require_once("constants.php");
 
-function getPictures() {
+/********** Get image functions **********/
+
+/**
+ * Gets images based on GET parameter (page)
+ */
+function getImages() {
+	validateGuest();
 	$page = getPageNumber();
 	$imgz = generateImageArray($page);
 
@@ -14,37 +21,12 @@ function getPictures() {
 	return $json;
 }
 
-function generateImageArray($page) {
-	$imgzPerPage = 4;
-	$imgz = getAllPictures();
-	$imgz = array_slice($imgz, ($page - 1) * $imgzPerPage, $imgzPerPage);
-
-	return $imgz;
-}
-
-function getAllPictures() {
-	$imgz = scandir("imgz");
-	$imgz = array_slice($imgz, 2);
-	$imgz = array_reverse($imgz);
-
-	return $imgz;
-}
-
-function getPageNumber() {
-	$page = 1;
-
-	if (!empty($_GET["page"]) && is_numeric($_GET["page"])) {
-		$page = (int)$_GET["page"];
-	}
-
-	return $page;
-}
-
-function getPicture() {
-	if (empty($_GET["img"]) || empty($_GET["direction"])) {
-		header('HTTP/1.1 401');
-        die();
-	}
+/**
+ * Gets next or previous image based on GET parameters (img, direction)
+ */
+function getImage() {
+	validateGuest();
+	checkGetImageRequest();
 
 	$img = $_GET["img"];
 	$direction = $_GET["direction"];
@@ -59,35 +41,144 @@ function getPicture() {
 	return $json;
 }
 
-function getPictureForNameAndDirection($img, $direction) {
-	$imgz = getAllPictures();
+/********** Utility functions **********/
 
-	$retIndex = -1;
+/**
+ * Validates required parameters for the getImage function
+ */
+function checkGetImageRequest() {
+	if (empty($_GET["img"]) || empty($_GET["direction"])) {
+		header('HTTP/1.1 401');
+        die();
+	}
+}
+
+/**
+ * Handles pagination
+ * @param int $page
+ */
+function generateImageArray($page) {
+	$imgz = getAllImages();
+	$imgz = array_slice($imgz, ($page - 1) * IMAGES_PER_PAGE, IMAGES_PER_PAGE);
+
+	return $imgz;
+}
+
+/**
+ * Gets all images ordered by date (descending)
+ */
+function getAllImages() {
+	$imgz = scandir("imgz");
+	$imgz = array_slice($imgz, 2); // remove . and ..
+	$imgz = array_reverse($imgz);
+
+	return $imgz;
+}
+
+/**
+ * Validate GET for the getImages function and get page number
+ */
+function getPageNumber() {
+	$page = 1;
+
+	if (!empty($_GET["page"]) && is_numeric($_GET["page"])) {
+		$page = (int)$_GET["page"];
+	}
+
+	return $page;
+}
+
+/**
+ * Get next or previous image
+ * @param String $img
+ * @param String $direction
+ */
+function getPictureForNameAndDirection($img, $direction) {
+	$imgz = getAllImages();
+	$index = getImageIndex($img, $imgz);
+	$index = adjustIndexForDirection($index, $direction, count($imgz));
+
+	$image = $imgz[$index];
+	return $image;
+}
+
+/**
+ * Get index for image name
+ * @param String $img
+ * @param Array $imgz
+ */
+function getImageIndex($img, $imgz) {
+	$index = -1;
+ 
 	for ($i = 0; $i < count($imgz); $i++) {
 		if ($imgz[$i] == $img) {
-			if ($direction == "right") {
-				$retIndex = $i + 1;
-			} else if ($direction == "left") {
-				$retIndex = $i - 1;
-			}
+			$index = $i;
+			break;
 		}
 	}
 
-	if ($retIndex >= count($imgz)) {
-		$retIndex = 0;
+	if ($index == -1) {
+		header('HTTP/1.1 401');
+        die();
 	}
 
-	if ($retIndex <= -1) {
-		$retIndex = count($imgz) - 1;
-	}
-
-	$ret = $imgz[$retIndex];
-	return $ret;
+	return $index;
 }
 
-function authenticate() {
+/**
+ * Increment / decrement index based on direction
+ * @param int $index
+ * @param String $direction
+ * @param int $limit
+ */
+function adjustIndexForDirection($index, $direction, $limit) {
+	if ($direction == "right") {
+		$index++;
+	} else if ($direction == "left") {
+		$index--;
+	}
+
+	if ($index >= $limit) {
+		$index = 0;
+	}
+
+	if ($index <= -1) {
+		$index = $limit - 1;
+	}
+
+	return $index;
+}
+
+/********** Authentication **********/
+
+/**
+ * Validate session
+ */
+function validateGuest() {
 	if (!(isset($_SESSION[SESSION_KEY]) && $_SESSION[SESSION_KEY] == SESSION_VALUE)) {
 		header('HTTP/1.1 401');
         die();
 	}
+}
+
+/**
+ * Create session for authenticated user
+ */
+function authenticate() {
+	if (isset($_POST['secret']) && md5($_POST['secret']) == HASHED_PASSWORD) {
+		$_SESSION[SESSION_KEY] = SESSION_VALUE;
+	}
+
+	if (isset($_SESSION[SESSION_KEY]) && $_SESSION[SESSION_KEY] == SESSION_VALUE) {
+		header("Location: index.html");
+	} else {
+		header("Location: login.html");
+	}
+}
+
+/**
+ * Destroy all sessions - logout
+ */
+function logout() {
+	session_destroy();
 }
