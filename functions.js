@@ -4,7 +4,7 @@
  * Shows next page of images
  */
 function getImages() {
-	$.get("resources/get_images.php", {"page" : globalPage}).success(function(data) {
+	$.get("resources/get_images.php", {"page": globalPage}).success(function(data) {
 		globalPage++;
 		
 		var imgz = JSON.parse(data).images;

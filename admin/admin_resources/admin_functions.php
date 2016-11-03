@@ -9,16 +9,19 @@ require_once("admin_constants.php");
  */
 function uploadFiles() {
 	validateGuest();
+
+	$count = 0;
 	if (!empty($_FILES)) {
 		$files = $_FILES["files"];
 
 		foreach ($files["name"] as $i => $val) {
 			$data = getData($files, $i);
 			saveFile($data);
+			$count++;
 		}
 	}
 
-	header("Location: ../index.php?success=yes");
+	return $count;
 }
 
 /********** Utility functions **********/
