@@ -14,11 +14,15 @@ function uploadFiles() {
 	if (!empty($_FILES)) {
 		$files = $_FILES["files"];
 
+		mkdir(PATH_TEMP);
+
 		foreach ($files["name"] as $i => $val) {
 			$data = getData($files, $i);
 			saveFile($data);
 			$count++;
 		}
+
+		rmdir(PATH_TEMP);
 	}
 
 	return $count;
@@ -45,18 +49,21 @@ function getData($files, $index) {
 }
 
 /**
- * Saves an image (large and thumbnail)
+ * Saves an image (and its thumbnail)
  * @param Array $data
  */
 function saveFile($data) {
 	if (!$data["error"] && checkExtension($data["extension"])) {
 		$name = generateImageName($data["extension"]);
 		
+		$pathTemp = PATH_TEMP . $name;
 		$pathImage = PATH_IMAGES . $name;
 		$pathThumbnail = PATH_THUMBNAILS . $name;
 
-		move_uploaded_file($data["name"], $pathImage);
-		generateThumbnail($pathImage, $pathThumbnail);
+		move_uploaded_file($data["name"], $pathTemp);
+		generateImage($pathTemp, $pathImage, IMAGE);
+		generateImage($pathTemp, $pathThumbnail, THUMBNAIL);
+		unlink($pathTemp);
 	}
 }
 
@@ -70,21 +77,49 @@ function generateImageName($extension) {
 }
 
 /**
- * Generates a thumbnail for an image
+ * Generates an image from an upload
  * @param String $source
  * @param String $destination
+ * @param String $type
  */
-function generateThumbnail($source, $destination) {
+function generateImage($source, $destination, $type) {
 	$original = imagecreatefromjpeg($source);
 	$width = imagesx($original);
 	$height = imagesy($original);
-	
-	$thumbnailWidth = $width > $height ? 400 : 250;
-	$thumbnailHeight = floor($height * ($thumbnailWidth / $width));
 
-	$tempImage = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
-	imagecopyresampled($tempImage, $original, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $width, $height);
+	$newWidth = generateImageWidth($width, $height, $type);
+	$newHeight = generateImageHeight($width, $height, $newWidth);
+
+	$tempImage = imagecreatetruecolor($newWidth, $newHeight);
+	imagecopyresampled($tempImage, $original, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
 	imagejpeg($tempImage, $destination);
+}
+
+/**
+ * Generates image width
+ * @param int $width
+ * @param int $height
+ * @param String $type
+ */
+function generateImageWidth($width, $height, $type) {
+	if ($type == THUMBNAIL) {
+		$newWidth = $width > $height ? THUMBNAIL_WIDTH_LANDSCAPE : THUMBNAIL_WIDTH_PORTRAIT;
+	} else if ($type == IMAGE) {
+		$newWidth = $width > $height ? IMAGE_WIDTH_LANDSCAPE : IMAGE_WIDTH_PORTRAIT;
+	}
+
+	return $newWidth;
+}
+
+/**
+ * Generates image height
+ * @param int $width
+ * @param int $height
+ * @param int $newWidth
+ */
+function generateImageHeight($width, $height, $newWidth) {
+	$newHeight = floor($height * ($newWidth / $width));
+	return $newHeight;
 }
 
 /**

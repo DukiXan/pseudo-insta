@@ -4,6 +4,8 @@
  * Shows images for input files
  */
 function showImages(input) {
+	$(".imgz").html("");
+	
     for(var i = 0; i < input.files.length; i++) {
     	var reader = new FileReader();
         reader.onload = function (e) {
@@ -29,6 +31,7 @@ function validateGuest() {
  */
 function upload(form) {
 	$(".response").html("The images are being uploaded... Feel free to close this window.");
+	$(".imgz").html("");
 	
 	$.ajax({
 		url: "admin_resources/admin_upload.php",
@@ -39,7 +42,6 @@ function upload(form) {
 		success: function(data) {
 			var count = data;
 			$(".response").html(count + " images uploaded.");
-			$(".imgz").html("");
 		}
 	});
 }
@@ -47,7 +49,7 @@ function upload(form) {
 /********** Events **********/
 
 /**
- * Event for file upload
+ * Event for showing images
  */
 $("#file").change(function(){
     showImages(this);
