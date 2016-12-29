@@ -11,18 +11,17 @@ function uploadFiles() {
 	validateGuest();
 
 	$count = 0;
-	if (!empty($_FILES)) {
-		$files = $_FILES["files"];
+	if (!empty($_POST["files"])) {
+		$files = $_POST["files"];
 
-		mkdir(PATH_TEMP);
+		mkdir(PATH_TEMP); // Creates temp folder
 
-		foreach ($files["name"] as $i => $val) {
-			$data = getData($files, $i);
-			saveFile($data);
+		foreach ($files as $file) {
+			saveFile($file);
 			$count++;
 		}
 
-		rmdir(PATH_TEMP);
+		rmdir(PATH_TEMP); // Deletes temp folder
 	}
 
 	return $count;
@@ -31,48 +30,39 @@ function uploadFiles() {
 /********** Utility functions **********/
 
 /**
- * Gets data from FILES array
- * @param Array $files
- * @param int $index
- */
-function getData($files, $index) {
-	$data = array();
-
-	$data["name"] = $files["tmp_name"][$index];
-	$data["size"] = $files["size"][$index];
-	$data["error"] = $files["error"][$index];
-
-	$extension = explode('.', $files["name"][$index]);
-	$data["extension"] = strtolower(end($extension));
-
-	return $data;
-}
-
-/**
  * Saves an image (and its thumbnail)
  * @param Array $data
  */
 function saveFile($data) {
-	if (!$data["error"] && checkExtension($data["extension"])) {
-		$name = generateImageName($data["extension"]);
-		
-		$pathTemp = PATH_TEMP . $name;
-		$pathImage = PATH_IMAGES . $name;
-		$pathThumbnail = PATH_THUMBNAILS . $name;
+	$name = generateImageName();
+	
+	$pathTemp = PATH_TEMP . $name;
+	$pathImage = PATH_IMAGES . $name;
+	$pathThumbnail = PATH_THUMBNAILS . $name;
 
-		move_uploaded_file($data["name"], $pathTemp);
-		generateImage($pathTemp, $pathImage, IMAGE);
-		generateImage($pathTemp, $pathThumbnail, THUMBNAIL);
-		unlink($pathTemp);
-	}
+	$image = getImageFromString($data);
+
+	imagejpeg($image, $pathTemp); // Saves temp image
+	generateImage($pathTemp, $pathImage, IMAGE);
+	generateImage($pathTemp, $pathThumbnail, THUMBNAIL);
+	unlink($pathTemp); // Deletes temp image
+}
+
+/**
+ * Generates image from string
+ * @param String $data
+ */
+function getImageFromString($data) {
+	$data = base64_decode(preg_replace("#^data:image/\w+;base64,#i", '', $data));
+	$image = imagecreatefromstring($data);
+	return $image;
 }
 
 /**
  * Generates a unique name for the image
- * @param String $extension
  */
-function generateImageName($extension) {
-	$name = date("Y-m-d-H-i-s") . uniqid() . rand(1, 10000) . "." . $extension;
+function generateImageName() {
+	$name = date("Y-m-d-H-i-s") . uniqid() . rand(1, 10000) . ".jpg";
 	return $name;
 }
 
@@ -120,14 +110,6 @@ function generateImageWidth($width, $height, $type) {
 function generateImageHeight($width, $height, $newWidth) {
 	$newHeight = floor($height * ($newWidth / $width));
 	return $newHeight;
-}
-
-/**
- * Validates image format
- * @param String $extension
- */
-function checkExtension($extension) {
- 	return $extension == "jpg" || $extension == "jpeg";
 }
 
 /********** Authentication **********/

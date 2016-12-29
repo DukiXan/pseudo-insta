@@ -107,3 +107,8 @@ label:hover {
 .response {
 	font-size: 25px;
 }
+
+.invisibleCanvas {
+  	display: none !important;
+  	border: 2px solid red;
+}
