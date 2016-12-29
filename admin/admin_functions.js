@@ -1,3 +1,5 @@
+// TODO: Resize images before upload
+
 /********** Functions **********/
 
 /**
