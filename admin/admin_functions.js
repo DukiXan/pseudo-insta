@@ -58,6 +58,22 @@ function upload() {
 	$(".imgz").html("");
 	
 	$.ajax({
+		xhr: function () {
+	        var xhr = new window.XMLHttpRequest();
+	        xhr.upload.addEventListener("progress", function (evt) {
+	            if (evt.lengthComputable) {
+	                var percentComplete = evt.loaded / evt.total;
+	                console.log(percentComplete);
+	                $('.progress').css({
+	                    width: percentComplete * 100 + '%'
+	                });
+	                if (percentComplete === 1) {
+	                    $('.progress').addClass('hide');
+	                }
+	            }
+	        }, false);
+	        return xhr;
+	    },
 		url: "admin_resources/admin_upload.php",
 		type: "POST",
 		dataType: "json",
