@@ -59,6 +59,7 @@ function upload() {
 	
 	$.ajax({
 		xhr: function () {
+	        $('.progress').removeClass('hide');
 	        var xhr = new window.XMLHttpRequest();
 	        xhr.upload.addEventListener("progress", function (evt) {
 	            if (evt.lengthComputable) {
